@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\Dmitr062\Desktop\PSD\start.py", line 168, in insert_zhr
+    insert_zhr_izol(def_db,road_programm,road_db,*data)
+TypeError: insert_zhr_izol() takes 6 positional arguments but 7 were given
