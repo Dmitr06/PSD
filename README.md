@@ -5,7 +5,7 @@ All forms are taken from "СП 392.1325800.2018"
 The output is in the Excell format.
 For developing the program, used: Python (3), Tkinter, openpyexcel.
 
-#PS(US)
+###PS(US)
 
 This is my first program. 
 I would be glad to receive comments and advice.
@@ -19,6 +19,6 @@ I would be glad to receive comments and advice.
 Вывод происходит в формате Excell.
 При разработке программы использовались: Python (3), Tkinter, openpyexcel.
 
-#П.С.
+###П.С.
 Это моя первая программа. 
 Буду рад замечаниям и советам.
