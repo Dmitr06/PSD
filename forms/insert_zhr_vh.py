@@ -68,8 +68,8 @@ def insert_zhr_vh(akt_vh,road_programm,road_db,tube,km_start,km_finish,dy_tube):
     ws_l1['U'+str(num_start+3)].font = ft
     ws_l1['U'+str(num_start+3)]='%s %s %s _____________ %s г.'%(temp['otv'][1],temp['otv'][2],temp['otv'][0],temp['date'])
     ws_l1.print_area = 'A1:AS'+str(num_start+4)
-    wb_zhr.remove_sheet(wb_zhr['L2'])
-    wb_zhr.remove_sheet(wb_zhr['L3'])
+    del(wb_zhr['L2'])
+    del(wb_zhr['L3'])
     road_db = os.path.normpath(road_db)
     road_db = os.path.join(road_db, 'Входной контроль')
     if not os.path.exists(road_db):
