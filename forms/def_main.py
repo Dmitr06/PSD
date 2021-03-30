@@ -1,7 +1,8 @@
 ﻿from datetime import *
-import random,os
+import random, os
 from tkinter import *
 from tkinter.messagebox import showerror
+import traceback
     
 def def_form(db_from_start,all_otv,all_control,all_sk,all_lkk):     #основное окно
     def add_s(def_sec):                   #Добавление дефектной секции (в db_from_start)
@@ -47,8 +48,11 @@ def def_form(db_from_start,all_otv,all_control,all_sk,all_lkk):     #основ�
         def_ent_dist.insert(0,db_from_start[temp]['dist'][0])
         def_ent_dl_muft.delete(0,END)
         def_ent_dl_muft.insert(0,db_from_start[temp]['dl_muft'])
-        def_ent_zakl.delete(0,END)
-        def_ent_zakl.insert(0,db_from_start[temp]['zakl'])
+        try:
+            def_ent_zakl.delete(0,END)
+            def_ent_zakl.insert(0,db_from_start[temp]['zakl'])
+        except KeyError:
+            traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
         if 'type_base' in db_from_start[temp]:                   #Если новая запись, то остается значени предыдщей записи, если есть - присваивается
             var_type_base.set(db_from_start[temp]['type_base'])
         if 'otv' in db_from_start[temp]:                   #Если новая запись, то остается значени предыдщей записи, если есть - присваивается
@@ -201,7 +205,18 @@ def def_form(db_from_start,all_otv,all_control,all_sk,all_lkk):     #основ�
     #------------------Тип дефекта в Frame03 22.03.2020
     Label(frame03_def, text='Тип устранения:').grid(row=45,column=0)
     var_type_base=StringVar(value='')
-    OptionMenu(frame03_def,var_type_base,'Муфта П1','Муфта П2','Муфта П3','Муфта П4','Муфта П5У','Муфта П6','Муфта П7','Муфта П8','Муфта П9','Муфта П10','Шлифовка').grid(row=45,column=1)
+    OptionMenu(frame03_def,
+               var_type_base,
+               'муфта П1',
+               'муфта П2',
+               'муфта П3',
+               'муфта П4',
+               'муфта П5У',
+               'муфта П6',
+               'муфта П7',
+               'муфта П8',
+               'муфта П9',
+               'Шлифовка').grid(row=45,column=1)
     #------------------Меню ответственных по работам в Frame03
     Label(frame03_def, text='Производитель работ:').grid(row=50,column=0)
     Label(frame03_def, text='Контролирующее лицо:').grid(row=60,column=0)

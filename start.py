@@ -1,7 +1,7 @@
 from tkinter import *
-from tkinter.messagebox import showinfo,askquestion,showerror
+from tkinter.messagebox import showinfo,showerror
 from tkinter import filedialog
-import shelve,os,copy,random,getpass
+import shelve,os
 import traceback
 
 import forms.def_main as def_main
@@ -128,6 +128,8 @@ def save_akt_vh():                                  #функция скнопк
     except IndexError:
         showerror('Индекс!','Ошибка индекса!')
         traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
+    except KeyError:
+        traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
 
 def up_akt_vh():                                #поднимает на единицу акт входного в списке листбокс
     try:
@@ -155,7 +157,7 @@ def down_akt_vh():                              #опускает на един�
 
 def insert_vh(akt_vh,road_programm,road_db,data):
     try:
-        insert_zhr_vh(akt_vh,road_programm,road_db,*data)
+        insert_zhr_vh(akt_vh,road_programm,os.path.split(road_db)[0],*data)
         insert_akt_vh(akt_vh,road_programm,road_db,*data)
         showinfo(title='Успех!', message='Готово!')
     except:
@@ -164,6 +166,7 @@ def insert_vh(akt_vh,road_programm,road_db,data):
         
 def insert_zhr(def_db,akt_vh,road_programm,road_db,data):
     try:
+        road_db = os.path.split(road_db)[0]
         insert_zhr_ground(def_db,road_programm,road_db,*data)
         insert_zhr_izol(def_db,road_programm,road_db,*data)
         insert_zhr_ozhr(akt_vh,def_db,road_programm,road_db,*data)
@@ -183,8 +186,8 @@ def insert_akts(akt_vh,road_programm,road_db,data):
         showerror('Ошибка!','Что-то пошло не так! Не удалось создать excell-файл.')
         traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
         
-if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
-    raise SystemExit
+'''if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
+    raise SystemExit'''
 
 akt_vh=[]   #список с актами входного контроля
 def_db=[]   #данные посекциям с дефектами получаемые из формы def_form
@@ -210,7 +213,7 @@ for (i,j) in zip(('otv.txt','control.txt','sk.txt','lkk.txt','materials.txt'),(a
         f.close()
     
 #-------------------------------------Основное окно
-main_win=Tk()                   
+main_win=Tk()
 main_win.title('Дефекты')
 #--------------------------------------Меню в шапке главного окна
 db_open_status=False            #флаг, открыта ли БД

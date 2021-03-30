@@ -1,10 +1,8 @@
-﻿from openpyxl import Workbook,load_workbook
-from openpyxl.styles import Font
-import os
+﻿from openpyxl import load_workbook
 import re
 from datetime import *
 
-def create_row (ws,ws2,current_row,coord,height=13.50):
+def create_row (ws, ws2, current_row, coord, height=13.50):
     ws.insert_rows(current_row)
     ws.row_dimensions[current_row].height = height
     ws.merge_cells('A{0}:C{0}'.format(current_row))
@@ -22,22 +20,20 @@ def insert_main(def_db,road_programm,road_db,tube,km_start,km_finish,dy_tube):
     ws_style = wb['Styles']
     #--------------Реестр
     ws1=wb['Reestr']
-    ws1['AH1'] = 'Устранение дефектов методом выборочного ремонта  на секциях {0}, {1}-{2} км, Ду {3} мм. \n\n От км/ПК {1} км.\n До км/ПК {2} км. '.format(tube,km_start,km_finish,dy_tube)
-    ws1['E10'] = 'Устранение дефектов методом выборочного ремонта  на секциях {0}, {1}-{2} км, Ду {3} мм.'.format(tube,km_start,km_finish,dy_tube)
-    ws1['AF33'] =  '№'+def_db[0]['sec']
-    ws1['AU18'] = def_db[0]['otv'][2]
+    ws1['A3'] = 'Устранение дефектов методом выборочного ремонта  на секциях {0}, {1}-{2} км, Ду {3} мм. \n\n От км/ПК {1} км.\n До км/ПК {2} км. '.format(tube,km_start,km_finish,dy_tube)
+    ws1['E19'] = 'Устранение дефектов методом выборочного ремонта  на секциях {0}, {1}-{2} км, Ду {3} мм.'.format(tube,km_start,km_finish,dy_tube)
+    ws1['AF42'] =  '№'+def_db[0]['sec']
+    ws1['A1'] = def_db[0]['otv'][2]
     for i in def_db[1:]:
-        ws1['AF33'] = ws1['AF33'].value + ', ' + i['sec']
-        if i['otv'][2] not in ws1['AU18'].value:
-            ws1['AU18'] = ws1['AU18'].value + '\n' + i['otv'][2]
-    ws1['AF34'] = '№1'
+        ws1['AF42'] = ws1['AF42'].value + ', ' + i['sec']
+        if i['otv'][2] not in ws1['A1'].value:
+            ws1['A1'] = ws1['A1'].value + ', ' + i['otv'][2]
+    ws1['AF43'] = '№1'
     if len(def_db) > 1:
-        ws1['AF34'] = ws1['AF34'].value+ '-%s'%(len(def_db))
+        ws1['AF43'] = ws1['AF43'].value+ '-%s'%(len(def_db))
     #--------------Перечень лиц
     ws2=wb['Perechen']
-    ws2['G4'] = def_db[0]['otv'][2]
-    ws2['AW3'] = 'Устранение дефектов методом выборочного ремонта  на секциях {0}, {1}-{2} км, Ду {3} мм.'.format(tube,km_start,km_finish,dy_tube)
-    index_row = 18
+    index_row = 14
     numb = 2
     contr = []
     lkk = []
@@ -47,7 +43,7 @@ def insert_main(def_db,road_programm,road_db,tube,km_start,km_finish,dy_tube):
         for (x,y,z) in zip((defect['contr'],defect['lkk'],defect['sk'],defect['otv']),(contr,lkk,sk,otv),('A2','A3','A4','A5')):
             if (x not in y) and (x[0] != ''):
                 y.append(x)
-                if (y is contr)or(y is otv): height_row = 150
+                if (y is contr) or (y is otv): height_row = 130
                 else: height_row = 60
                 create_row (ws2,ws_style,index_row,(1,1),height_row)
                 temp_row = str(index_row)
@@ -111,17 +107,17 @@ def insert_main(def_db,road_programm,road_db,tube,km_start,km_finish,dy_tube):
     ws5['A'+str(index_row)] = "%s, %s км-%s км."%(tube,km_start,km_finish)
     ws5.print_area = 'A1:AV'+str(index_row+13)
     #----------------Конец
-    wb.remove_sheet(wb['Styles'])
+    wb.remove(wb['Styles'])
     wb.save(road_db.rpartition('/')[0]+'/0. Основное.xlsx')
 
 
 road_to_excel='/Excell/main.xlsx'
-#ws=('Адгезия','Выборочный ремонт','Изоляция','Рекультивация','Укладка тп','Объемы','Схема')
 if __name__=='__main__':
     import os
     road_to_excel='../Excell/main.xlsx'
     road=os.getcwd()
-    road_db=road.replace('\\','/')
+    road_db=road.replace('\\','/')[:-9]+'Тест/'
+    print(road_db)
     road_programm = ''
     tube,km_start,km_finish,dy_tube='МНПП "Рязань-Тула-Орел" отвод на новомосковскую НБ, ДТ','12','13','530'
     def_db=[{'sec': '12', 'date': [date(2018, 12, 12), date(2018, 12, 13), date(2018, 12, 14)], 'dist': [10.1, 9.11, 11.09, 5.44, 14.76], 'km': '1', 'dl_muft': 1.0, 'rand_value': [0.48533824224793676, 3.6729518931973657, 2.861346564462221, 2.705419511460805], 'defect': {'1': {'sec': '12', 'dist': '123', 'lab': 'Риска с ППОШ с расслоением', 'dl': '5', 'sh': '6', 'gl': '7', 'type': 'Муфта П1'}, '2': {'sec': '12', 'dist': '123', 'lab': 'Риска с ППОШ с расслоением и ВНП', 'dl': '234', 'sh': '234', 'gl': '65', 'type': 'Муфта П2'}, '3': {'sec': '12', 'dist': '534536', 'lab': 'Риска с ППОШ с расслоением и ВНП', 'dl': '45534', 'sh': '345345', 'gl': '3535', 'type': 'Шлифовка'}}, 'otv': ('Афанасьев А.Б.', 'Начальник РУ№1', 'ЦРС "Рязань"'), 'contr': ('Клименко Д.А.', 'Начальник ЛАЭС №1', 'ППС "Плавск'), 'sk': ('Мирошкин М.В.', 'Инженер СК', 'ООО "Сег'), 'lkk': ('Козин А.П.', 'Инженер-дефектоскопист', 'ЛККиД')},

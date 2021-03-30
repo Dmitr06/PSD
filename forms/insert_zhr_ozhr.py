@@ -1,6 +1,6 @@
 ﻿from openpyxl import load_workbook
 from datetime import *
-
+import os, os.path
 
 def search_content(ws, text, current_row):
     for i in ws.iter_rows(min_row=current_row, max_col=1):  # заполняем концовку 0 раздела
@@ -9,7 +9,7 @@ def search_content(ws, text, current_row):
     return current_row
 
 
-def insert_zhr_ozhr(akt_vh, def_db, road_programm,road_db, tube, km_start, km_finish, dy_tube):
+def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_finish, dy_tube):
     def table_main(ws, ws_style, table, current_row, coord, height=13.50):
         if table == table_0:
             for i in table:
@@ -197,20 +197,27 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm,road_db, tube, km_start, km_fi
             date_temp = date.strftime('%d.%m.%Y')+' г.' #creat key for dict
             otv_temp = ' '.join((sec['otv'][1],sec['otv'][2],sec['otv'][0]))
             lkk_temp = ' '.join((sec['lkk'][1],sec['lkk'][2],sec['lkk'][0]))
-            if sec['date'][0] == sec['date'][1]:   #type of repair/mufts
-                numb_of_styk = 10
-                type_muft='П2'
-            else:
-                numb_of_styk = 2
-                type_muft = 'П1'
             if date_temp not in section_3_content: #insert new days
                 section_3_content[date_temp]=[]
             if i == 0:
                 section_3_content[date_temp].append(('Вскрытие дефектного участка трубопровода на секции № %s - %s м3.'%(sec['sec'], ground_work), otv_temp))
                 section_3_content[date_temp].append(('Очистка трубопровода от изоляции на секции № %s - %s п.м.'%(sec['sec'], round((sec['dist'][2]-sec['dist'][1]), 1)), otv_temp))
                 section_3_content[date_temp].append(('Проведение ДДК секции № %s.'%sec['sec'],lkk_temp))
-                section_3_content[date_temp].append(('Установка муфты %s на секции № %s - 1 шт.'%(type_muft,sec['sec']),otv_temp))
-                section_3_content[date_temp].append(('Дефектоскопия сварных швов - %s шт.'%numb_of_styk,lkk_temp))                
+                type_repair = True
+                for j in sec['defect'].values():
+                    if 'П1' in j['type']:
+                        type_repair = False
+                        section_3_content[date_temp].append(('Установка муфты П1 на секции № %s - 1 шт.' % (sec['sec']), otv_temp))
+                        section_3_content[date_temp].append(('Дефектоскопия сварных стыков - 2 шт.', lkk_temp))
+                        break
+                    elif 'уфт' in j['type']:
+                        type_repair = False
+                        section_3_content[date_temp].append(('Установка муфты П2 на секции № %s - 1 шт.' % (sec['sec']), otv_temp))
+                        section_3_content[date_temp].append(('Дефектоскопия сварных стыков - 10 шт.', lkk_temp))
+                        break
+                if type_repair == True:  # type of repair/mufts
+                    section_3_content[date_temp].append(('Шлифовка дефектов на секции № %s - %s дефектов.' % (sec['sec'], len(j)), otv_temp))
+                    section_3_content[date_temp].append(('Дефектоскопия отремонтированных дефектов - %s дефектов.' % len(j), lkk_temp))
             if i == 1:
                 section_3_content[date_temp].append(('Изоляция отремонтированного участка секции № %s - %s п.м.'%(sec['sec'],round((sec['dist'][2]-sec['dist'][1] + 0.45),1)),otv_temp))
             if i == 2:
@@ -307,19 +314,18 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm,road_db, tube, km_start, km_fi
     ws7 = wb_zhr['Part 7']
     ws7['E46']='%s _____________ %s г.'%(temp_otv,temp_date)
     del (wb_zhr['L2'])
-    road = road_db.rpartition('/')[0] + '/Журналы'
-    if not os.path.exists(road):
-        os.makedirs(road)
-    wb_zhr.save(road + '/3. ОЖР.xlsx')
-
+    road_db = os.path.normpath(road_db)
+    road_db = os.path.join(road_db, 'Журналы')
+    if not os.path.exists(road_db):
+        os.makedirs(road_db)
+    road_db = os.path.join(road_db, '3. ОЖР.xlsx')
+    wb_zhr.save(road_db)
 
 road_to_excel = '/Excell/zhr_ozhr.xlsx'
 if __name__ == '__main__':
-    import os
-
-    road_to_excel = '/../Excell/zhr_ozhr.xlsx'
-    road = os.getcwd()
-    road = road.replace('\\', '/')
+    road_to_excel = '../Excell/zhr_ozhr.xlsx'
+    road_db = os.getcwd() + '\..\..\Тест'
+    road_programm = ''
     tube, km_start, km_finish, dy_tube = 'МНПП "Рязань-Тула-Орел" отвод на новомосковскую НБ, ДТ', '12', '13', '530'
     def_db = [{'sec': '12', 'date': [date(2018, 12, 12), date(2018, 12, 13), date(2018, 12, 14)],
                'dist': [10.1, 9.11, 11.09, 5.44, 14.76], 'km': '1', 'dl_muft': 1.0,
@@ -400,4 +406,4 @@ if __name__ == '__main__':
          'contr': ('Клименко Д.А.', 'Начальник ЛАЭС №1', 'ППС "Плавск'),
          'kk': ('Клименко Д.А.', 'Начальник ЛАЭС №1', 'ППС "Плавск'),
          'sk': ('Мирошкин М.В.', 'Инженер СК', 'ООО "Сег')}]
-    insert_zhr_ozhr(akt_vh, def_db, road, road, tube, km_start, km_finish, dy_tube)
+    insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_finish, dy_tube)
