@@ -70,17 +70,18 @@ def insert_zhr_vh(akt_vh,road_programm,road_db,tube,km_start,km_finish,dy_tube):
     ws_l1.print_area = 'A1:AS'+str(num_start+4)
     wb_zhr.remove_sheet(wb_zhr['L2'])
     wb_zhr.remove_sheet(wb_zhr['L3'])
-    road=road_db.rpartition('/')[0]+'/Входной контроль'
-    if not os.path.exists(road):
-        os.makedirs(road)    
-    wb_zhr.save(road+'/Журнал входного контроля.xlsx')
+    road_db = os.path.normpath(road_db)
+    road_db = os.path.join(road_db, 'Входной контроль')
+    if not os.path.exists(road_db):
+        os.makedirs(road_db)
+    road_db = os.path.join(road_db, 'Журнал входного контроляи.xlsx')
+    wb_zhr.save(road_db)
 
 road_to_excel='/Excell/zhr_vh.xlsx'
 if __name__=='__main__':
     import os
     road_to_excel='../Excell/zhr_vh.xlsx'
-    road=os.getcwd()
-    road_db=road.replace('\\','/')
+    road_db = os.getcwd() + '\..\..\Тест'
     road_programm = ''
     tube,km_start,km_finish,dy_tube='МНПП "Рязань-Тула-Орел" отвод на новомосковскую НБ, ДТ','12','13','530'
     akt_vh=[{'name': 'Абразив', 'full_name': 'Абразив 123', 'marker': 'кг', 'TU': 'ТУ5', 'param': '-', 'date': '02.03.2019', 'doc': 'Паспорт 34234', 'kol': '3', 'otv': ('Кулешов А.Б.', 'Начальник РУ№3', 'ЦРС "Рязань"'), 'contr': ('Макаров М.А.', 'Начальник АРС', 'ЛПДС "Рязань"'), 'kk': ('Макаров М.А.', 'Начальник АРС', 'ЛПДС "Рязань"'), 'sk': ('Мирошкин М.В.', 'Инженер СК', 'ООО "Сег')},
