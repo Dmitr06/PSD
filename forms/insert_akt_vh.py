@@ -21,17 +21,15 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         current_wb['M11'] = x['date'] + ' г.'  # дата
         current_wb['P6'] = i + 3  # номер акта
         current_wb['A8'] = '%s, в кол-ве %s %s.' % (x['full_name'], x['kol'], x['marker'])  # номер акта
-        current_wb['H13'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
-        current_wb['H15'] = ' '.join((x['contr'][1], x['contr'][2], x['contr'][0]))
-        current_wb['H17'] = ' '.join((x['kk'][1], x['kk'][2], x['kk'][0]))
-        current_wb['H19'] = ' '.join((x['sk'][1], x['sk'][2], x['sk'][0]))
+        current_wb['K13'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
+        current_wb['K19'] = ' '.join((x['contr'][1], x['contr'][2], x['contr'][0]))
+        current_wb['K17'] = ' '.join((x['sk'][1], x['sk'][2], x['sk'][0]))
         current_wb['J32'] = x['doc']
         current_wb['A35'] = x['param']
         current_wb['H37'] = x['TU']
         current_wb['L51'] = x['otv'][0]
-        current_wb['L53'] = x['contr'][0]
-        current_wb['L55'] = x['kk'][0]
-        current_wb['L57'] = x['sk'][0]
+        current_wb['L57'] = x['contr'][0]
+        current_wb['L55'] = x['sk'][0]
         current_wb.print_area = 'A1:AB58'
     del (wb['Empty'])
     # ---------------------электроды

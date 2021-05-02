@@ -9,8 +9,8 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         wb = load_workbook(road_programm + road_to_excel)
         # --------------начинаем заполнение акта адгезии
         ws1 = wb['Адгезия']
-        ws1['N11'] = i + 1
-        ws1['W14'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
+        ws1['O11'] = i + 1
+        ws1['W14'] = x['date'][2].strftime('%d.%m.%y') + ' г.'
         ws1['J16'] = tube
         ws1['K22'] = dy_tube + ' мм.'
         ws1['D29'] = x['km'] + ' км.'

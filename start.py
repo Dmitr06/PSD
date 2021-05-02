@@ -3,6 +3,7 @@ from tkinter.messagebox import showinfo,showerror
 from tkinter import filedialog
 import shelve,os
 import traceback
+import getpass
 
 import forms.def_main as def_main
 from forms.insert_akt_all import insert_akt_all
@@ -186,8 +187,8 @@ def insert_akts(akt_vh,road_programm,road_db,data):
         showerror('Ошибка!','Что-то пошло не так! Не удалось создать excell-файл.')
         traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
         
-'''if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
-    raise SystemExit'''
+if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
+    raise SystemExit
 
 akt_vh=[]   #список с актами входного контроля
 def_db=[]   #данные посекциям с дефектами получаемые из формы def_form
