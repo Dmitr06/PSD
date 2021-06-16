@@ -37,7 +37,7 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         for num_def, defect in x['defect'].items():
             num_row = str(current_row)
             ws2['A' + num_row] = index_def
-            ws2['B' + num_row] = defect['sec']
+            ws2['B' + num_row] = x['sec']
             ws2['E' + num_row] = num_def
             ws2['H' + num_row] = 'Дист.\n' + defect['dist']
             ws2['K' + num_row] = defect['lab']

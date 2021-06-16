@@ -65,23 +65,18 @@ def insert_zhr_svarki(def_db,road_programm,road_db,tube, km_start, km_finish, dy
             ws_l2['Q' + str(current_row)] = ws_l2['AU1'].value
             ws_l2['R' + str(current_row)] = 'Красюков \n Схема №'
             ws_l2['S' + str(current_row)] = 'X\nY'
-            #ws_l2['T' + str(current_row)] =
-            ws_l2['U' + str(current_row)] = '№001-ВИК-{0}-0388-{1}-{2}'.format(type_repair,
-                                                                               remont['km'],
-                                                                               remont['date'][0].strftime('%d%m%y'))
+            ws_l2['U' + str(current_row)] = remont['zakl'].upper()
             ws_l2['V' + str(current_row)] = remont['date'][0].strftime('%d.%m.%y') + ' г.'
             ws_l2['W' + str(current_row)] = 'годен'
             ws_l2['X' + str(current_row)] = 'УК'
-            ws_l2['Y' + str(current_row)] = '№001-УК-{0}-0388-{1}-{2}'.format(type_repair,
-                                                                               remont['km'],
-                                                                               remont['date'][0].strftime('%d%m%y'))
+            ws_l2['Y' + str(current_row)] = remont['zakl'].upper().replace('ВИК', 'УЗК')
+            ws_l2['Y' + str(current_row)] = remont['zakl'].upper().replace('/В', '/У')
             ws_l2['Z' + str(current_row)] = ws_l2['V' + str(current_row)].value
             ws_l2['AA' + str(current_row)] = 'годен'
             if type_repair == 'П2':
                 ws_l2['AB' + str(current_row)] = 'ПВК'
-                ws_l2['AC' + str(current_row)] = '№001-ПВК-{0}-0388-{1}-{2}'.format(type_repair,
-                                                                                    remont['km'],
-                                                                                    remont['date'][0].strftime('%d%m%y'))
+                ws_l2['AC' + str(current_row)] = remont['zakl'].upper().replace('ВИК', 'ПВК')
+                ws_l2['AC' + str(current_row)] = remont['zakl'].upper().replace('/В', '/П')
                 ws_l2['AD' + str(current_row)] = ws_l2['V' + str(current_row)].value
                 ws_l2['AE' + str(current_row)] = 'годен'
             current_row += 1
