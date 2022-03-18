@@ -70,7 +70,6 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
     # ---------------SECTION 1---------------
     ws1 = wb_zhr['Part 1']
     current_row = 7
-    adgezia = True
     for otv_man in otv:  # заносим в таблицу ответственного за проведение работ
         ws1.insert_rows(current_row)
         table_main(ws1, ws_l2, table_1, current_row, (1, 2), 54)
@@ -85,9 +84,7 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
         ws1['C' + str(current_row)] = work_start.strftime(
             '%d.%m.%Y') + ' г. ' + 'Основные работы по устранению дефектов.'
         ws1['D' + str(current_row)] = work_stop.strftime('%d.%m.%Y') + ' г.'
-        ws1['E' + str(current_row)] = ws1['C' + str(current_row)].value
-        if 'Лазарев' in otv_man[0]:
-            adgezia = False
+        ws1['E' + str(current_row)] = ws1['B' + str(current_row)].value
         current_row += 1
     for otv_man in contr:  # заносим в таблицу ответственного за контроль
         ws1.insert_rows(current_row)
@@ -102,7 +99,7 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
                 work_stop = i['date'][2]
         ws1['C' + str(current_row)] = work_start.strftime('%d.%m.%Y') + ' г. ' + 'Контроль  за подрядной организа-цией.'
         ws1['D' + str(current_row)] = work_stop.strftime('%d.%m.%Y') + ' г.'
-        ws1['E' + str(current_row)] = ws1['C' + str(current_row)].value
+        ws1['E' + str(current_row)] = ws1['B' + str(current_row)].value
         current_row += 1
     for otv_man in lkk:  # заносим в таблицу дефектоскопистов
         ws1.insert_rows(current_row)
@@ -117,19 +114,7 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
                 work_stop = i['date'][2]
         ws1['C' + str(current_row)] = work_start.strftime('%d.%m.%Y') + ' г. ' + 'Проведение НК сварных соединений.'
         ws1['D' + str(current_row)] = work_stop.strftime('%d.%m.%Y') + ' г.'
-        ws1['E' + str(current_row)] = ws1['C' + str(current_row)].value
-        current_row += 1
-    if adgezia:  # заносим в таблицу ответственного по адгезии
-        ws1.insert_rows(current_row)
-        table_main(ws1, ws_l2, table_1, current_row, (1, 2), 54)
-        ws1['A' + str(current_row)] = 'ЦРС "Рязань"'
-        ws1['B' + str(current_row)] = 'Мастер РУ №2 ЦРС "Рязань" Лазарев А.В.'
-        work_start = def_db[0]['date'][0]
-        work_stop = def_db[-1]['date'][2]
-        ws1['C' + str(current_row)] = work_start.strftime(
-            '%d.%m.%Y') + ' г. ' + 'Определение адгезии защитного покрытия.'
-        ws1['D' + str(current_row)] = work_stop.strftime('%d.%m.%Y') + ' г.'
-        ws1['E' + str(current_row)] = 'Мастер РУ №2 ЦРС "Рязань" Лазарев А.В.'
+        ws1['E' + str(current_row)] = ws1['B' + str(current_row)].value
         current_row += 1
     if current_row > 17:
         ws1.print_area = 'A1:F28'
@@ -153,12 +138,15 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
             date_temp = date.strftime('%d.%m.%Y')+' г.' #creat key for dict
             otv_temp = ' '.join((sec['otv'][1],sec['otv'][2],sec['otv'][0]))
             lkk_temp = ' '.join((sec['lkk'][1],sec['lkk'][2],sec['lkk'][0]))
+            grnd_maker_temp = ' '.join((sec['grnd_maker'][1],sec['grnd_maker'][2],sec['grnd_maker'][0]))
             if date_temp not in section_3_content: #insert new days
                 section_3_content[date_temp]=[]
             if i == 0:
-                section_3_content[date_temp].append(('Вскрытие дефектного участка трубопровода на секции № %s - %s м3.'%(sec['sec'], ground_work), otv_temp))
-                section_3_content[date_temp].append(('Очистка трубопровода от изоляции на секции № %s - %s п.м.'%(sec['sec'], round((sec['dist'][2]-sec['dist'][1]), 1)), otv_temp))
-                section_3_content[date_temp].append(('Проведение ДДК секции № %s.'%sec['sec'],lkk_temp))
+                section_3_content[date_temp].append(('Вскрытие дефектного участка трубопровода на секции № %s - %s м3.'
+                                                     %(sec['sec'], ground_work),  grnd_maker_temp))
+                section_3_content[date_temp].append(('Очистка трубопровода от изоляции на секции № %s - %s п.м.'
+                                                     %(sec['sec'], round((sec['dist'][2]-sec['dist'][1]), 1)), otv_temp))
+                section_3_content[date_temp].append(('Проведение ДДК секции № %s.'% sec['sec'],lkk_temp))
                 type_repair = True
                 for j in sec['defect'].values():
                     if 'П1' in j['type']:
@@ -178,7 +166,8 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
                 section_3_content[date_temp].append(('Изоляция отремонтированного участка секции № %s - %s п.м.'%(sec['sec'],round((sec['dist'][2]-sec['dist'][1] + 0.45),1)),otv_temp))
             if i == 2:
                 section_3_content[date_temp].append(('Определение адгезии изоляционного покрытия секции № %s.'%sec['sec'],'Мастер РУ №2 ЦРС "Рязань" Лазарев А.В.'))
-                section_3_content[date_temp].append(('Обратная засыпка  дефектного участка тру-бопровода на секции № %s - %s м3.'%(sec['sec'],ground_work),' '.join((sec['otv'][1],sec['otv'][2],sec['otv'][0]))))
+                section_3_content[date_temp].append(('Обратная засыпка  дефектного участка трубопровода на секции № %s - %s м3.'
+                                                     %(sec['sec'], ground_work), grnd_maker_temp))
     for days in section_3_content.keys():           #insert in excel from list section_3_content
         for day in section_3_content[days]:         #for everyday
             current_row += 1
@@ -195,14 +184,14 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
     #---------------SECTION 6---------------
     ws6 = wb_zhr['Part 6']
     current_row = 6
-    table_main(ws6,ws_l2,table_6,current_row,(1,3),75)        #Act of electrod d3.2
+    table_main(ws6,ws_l2,table_6,current_row,(1,2),55)        #Act of electrod d3.2
     otv_temp = ' '.join((akt_vh[0]['otv'][1],akt_vh[0]['otv'][2],akt_vh[0]['otv'][0]))
     lkk_temp = ' '.join((def_db[0]['lkk'][1],def_db[0]['lkk'][2],def_db[0]['lkk'][0]))
     ws6['A' + str(current_row)] = 'Акт проверки сварочно-технологических свойств применяемых электродов Д 3.0 мм №1'
     ws6['B' + str(current_row)] = '%s г.\n%s\n%s'%(akt_vh[0]['date'],otv_temp,lkk_temp)
     current_row += 1
     ws6.insert_rows(current_row)
-    table_main(ws6,ws_l2,table_6,current_row,(1,3),75)        #Act of electrod d4.0
+    table_main(ws6,ws_l2,table_6,current_row,(1,2),55)        #Act of electrod d4.0
     otv_temp = ' '.join((akt_vh[0]['otv'][1],akt_vh[0]['otv'][2],akt_vh[0]['otv'][0]))
     lkk_temp = ' '.join((def_db[0]['lkk'][1],def_db[0]['lkk'][2],def_db[0]['lkk'][0]))
     ws6['A' + str(current_row)] = 'Акт проверки сварочно-технологических свойств применяемых электродов Д 4.0 мм №2'
@@ -214,7 +203,7 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
         temp_contr = ' '.join((akt['contr'][1],akt['contr'][2],akt['contr'][0]))
         temp_sk = ' '.join((akt['sk'][1],akt['sk'][2],akt['sk'][0]))
         ws6.insert_rows(current_row)
-        table_main(ws6,ws_l2,table_6,current_row,(1,3),106)
+        table_main(ws6,ws_l2,table_6,current_row,(1,2),55)
         ws6['A' + str(current_row)] = 'Акт входного контроля на %s №%s'%(akt['full_name'],numb_akt+3)
         ws6['B' + str(current_row)] = '%s г. \n%s \n%s \n%s'%(akt['date'],temp_otv,temp_contr,temp_sk)
 
@@ -223,32 +212,34 @@ def insert_zhr_ozhr(akt_vh, def_db, road_programm, road_db, tube, km_start, km_f
         temp_otv = ' '.join((akt['otv'][1],akt['otv'][2],akt['otv'][0]))
         temp_contr = ' '.join((akt['contr'][1],akt['contr'][2],akt['contr'][0]))
         temp_sk = ' '.join((akt['sk'][1],akt['sk'][2],akt['sk'][0]))
+        temp_grnd_maker = ' '.join((akt['grnd_maker'][1], akt['grnd_maker'][2], akt['grnd_maker'][0]))
+        temp_grnd_contr = ' '.join((akt['grnd_contr'][1], akt['grnd_contr'][2], akt['grnd_contr'][0]))
         temp_date=akt['date'][2].strftime('%d.%m.%Y')
         ws6.insert_rows(current_row)
-        table_main(ws6,ws_l2,table_6,current_row,(1,3),107)
+        table_main(ws6,ws_l2,table_6,current_row,(1,2),55)
         ws6['A' + str(current_row)] = 'Акт о выборочном ремонте дефектов на секции %s - №%s'%(akt['sec'],numb_defect+1)
         ws6['B' + str(current_row)] = '%s г. \n%s \n%s \n%s'%(temp_date,temp_otv,temp_contr,temp_sk)
         current_row += 1
         ws6.insert_rows(current_row)
-        table_main(ws6,ws_l2,table_6,current_row,(1,3),107)
+        table_main(ws6,ws_l2,table_6,current_row,(1,2),55)
         ws6['A' + str(current_row)] = 'Акты определения адгезии защитных покрытий секции %s - №%s'%(akt['sec'],numb_defect+1)
-        ws6['B' + str(current_row)] = '%s г. \nМастер РУ №2 ЦРС "Рязань" Лазарев А.В.'%(temp_date)
+        ws6['B' + str(current_row)] = '%s г. \n%s'% (temp_date,temp_otv)
         current_row += 1
         index_temp += 1
         ws6.insert_rows(current_row)
-        table_main(ws6,ws_l2,table_6,current_row,(1,3),107)
+        table_main(ws6,ws_l2,table_6,current_row,(1,2),55)
         ws6['A' + str(current_row)] = 'Акт на засыпку (обваловку) уложенного трубопровода - №%s'%(numb_defect+1)
-        ws6['B' + str(current_row)] = '%s г. \n%s \n%s \n%s'%(temp_date,temp_otv,temp_contr,temp_sk)
+        ws6['B' + str(current_row)] = '%s г. \n%s \n%s \n%s'%(temp_date, temp_grnd_maker,temp_grnd_contr,temp_sk)
         current_row += 1
         ws6.insert_rows(current_row)
-        table_main(ws6,ws_l2,table_6,current_row,(1,3),107)
+        table_main(ws6,ws_l2,table_6,current_row,(1,2),55)
         ws6['A' + str(current_row)] = 'Акт на фактически выполненный объём работ при устранении дефектов  на секции %s - №%s'%(akt['sec'],numb_defect+1)
         ws6['B' + str(current_row)] = '%s г. \n%s \n%s \n%s'%(temp_date,temp_otv,temp_contr,temp_sk)
-    if (current_row - 6) % 5 != 0:
-        page_end = 5 - (current_row - 6) + (current_row - 6) // 5 * 5
+    if (current_row - 6) % 11 != 0:
+        page_end = 10 - (current_row - 6) + (current_row - 6) // 11 * 11
         for i in range(current_row, current_row + page_end):
             current_row += 1
-            table_main(ws6, ws_l2, table_6, current_row, (1, 3), 107)
+            table_main(ws6, ws_l2, table_6, current_row, (1, 2), 55)
     ws6.print_area = 'A1:B%s' % current_row
     #-----------------END------------------
     ws7 = wb_zhr['Part 7']

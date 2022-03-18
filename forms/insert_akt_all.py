@@ -14,6 +14,7 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         ws1['J16'] = tube
         ws1['K22'] = dy_tube + ' мм.'
         ws1['D29'] = x['km'] + ' км.'
+        ws1['H45'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
         # --------------начинаем заполнение акта о выборочном ремонте
         ws2 = wb['Выборочный ремонт']
         ws2['AB5'] = x['date'][1].strftime('%d.%m.%Y') + ' г.'
@@ -72,29 +73,20 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         ws3['M19'] = tube
         ws3['G22'] = 'Дист. %s м/%s км' % (x['dist'][1], x['km'])
         ws3['S22'] = 'Дист. %s м/%s км' % (x['dist'][2], x['km'])
-        # --------------Рекультивация
-        ws4 = wb['Рекультивация']
-        ws4['B5'] = x['otv'][2]
-        ws4['N15'] = tube
-        ws4['D18'] = str(x['dist'][3]) + ' м'
-        ws4['T18'] = str(x['dist'][4]) + ' м'
-        ws4['M18'] = x['km'] + ' км.'
-        ws4['S23'] = x['date'][0].strftime('%d.%m.%Y') + ' г.'
-        ws4['Y23'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
-        ws4['B28'] = 'на %s %s км. Ду %s мм.' % (tube, x['km'], dy_tube)
-        ws4['I41'] = ' '.join((x['contr'][1], x['contr'][2], x['contr'][0]))
-        ws4['I44'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
         # --------------Укладка тп
         ws5 = wb['Укладка тп']
-        ws5['A1'] = x['otv'][2]
+        ws5['A1'] = x['grnd_maker'][2]
         ws5['A3'] = 'Устранение дефектов на секциях %s, %s-%s км, Ду %s мм.' % (tube, km_start, km_finish, dy_tube)
         ws5['P9'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
         ws5['K23'] = 'Дист. %s м/%s км' % (x['dist'][3], x['km'])
         ws5['V23'] = 'Дист. %s м/%s км' % (x['dist'][4], x['km'])
         ws5['AA22'] = str(round(x['dist'][4] - x['dist'][3], 1)) + ' м.п.'
-        ws5['O13'] = ' '.join(
-            (x['contr'][1], x['contr'][2], x['contr'][0]))  # поменять первую букву регистра с большой на маленькую
-        ws5['O20'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
+        ws5['O13'] = ' '.join((x['grnd_contr'][1],
+                               x['grnd_contr'][2],
+                               x['grnd_contr'][0]))  # поменять первую букву регистра с большой на маленькую
+        ws5['O20'] = ' '.join((x['grnd_maker'][1],
+                               x['grnd_maker'][2],
+                               x['grnd_maker'][0]))
         ws5['O16'] = ' '.join((x['sk'][1], x['sk'][2], x['sk'][0]))
         # --------------Акт объемов
         ws6 = wb['Объемы']
@@ -114,7 +106,8 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         ws6['R25'] = x['date'][0].strftime('%d.%m.%Y') + ' г.'
         ws6['R30'] = x['date'][1].strftime('%d.%m.%Y') + ' г.'
         ws6['R31'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
-        ws6['V25'] = x['otv'][2]
+        ws6['V25'] = x['grnd_maker'][2]
+        ws6['V26'] = x['otv'][2]
         ws6['P25'] = x['rand_value'][2] * x['rand_value'][3] * (x['dist'][4] - x['dist'][3]) * 1.4  # ПРОВЕРИТЬ
         ws6['P26'] = x['dist'][2] - x['dist'][1]
         type_repair = True

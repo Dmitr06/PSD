@@ -29,12 +29,12 @@ sys.excepthook = log_uncaught_exceptions
 
 def save_db():                 #Фукнция сохранить БД
     global road_db
-    main_theme='Устранение дефектов методом выборчного ремонта на секциях %s, %s-%s км, Ду %s мм.'%tuple(data_tube[i].get() for i in data)
-    if road_db=='':
+    main_theme = 'Устранение дефектов методом выборчного ремонта на секциях %s, %s-%s км, Ду %s мм.'%tuple(data_tube[i].get() for i in data)
+    if road_db == '':
         save_as_db()
     else:
         try:
-            if road_db[-4:-3]=='.':
+            if road_db[-4:-3] == '.':
                 road_db=road_db[:road_db.rfind('.')]            #если перезаписываем файл, то файл идет с расширением, убираем его.
             db=shelve.open(road_db)
             for i in data:
@@ -47,8 +47,8 @@ def save_db():                 #Фукнция сохранить БД
     
 def save_as_db():               #Фукнция сохранить БД как...
     global road_db
-    temp=filedialog.asksaveasfilename(filetypes=(("Data files","*.dat"),))
-    if temp!='':                #если открыли окно сохранения и закрыли его не выбрав файл, то путь становится пустым. Исключаем это.
+    temp = filedialog.asksaveasfilename(filetypes=(("Data files","*.dat"),))
+    if temp != '':                #если открыли окно сохранения и закрыли его не выбрав файл, то путь становится пустым. Исключаем это.
         road_db=temp
         save_db()
 

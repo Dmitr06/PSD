@@ -71,16 +71,6 @@ def def_form(db_from_start,all_otv,all_control,all_sk,all_lkk):     #основ�
 
     def save_s():                                                             #сохранение во временной БД (db_from_start)
         temp=l_box.curselection()[0]
-        if def_ent_date.get()!='':
-            try:
-                temp_date=list(int(i) for i in (def_ent_date.get().split('.')))     #интерпритация и запись даты
-                db_from_start[temp]['date'][0]=date(temp_date[2],temp_date[1],temp_date[0])#интерпритация и запись даты
-                db_from_start[temp]['date'][1]=db_from_start[temp]['date'][0]
-                if 'Муфта П1' == var_type_base.get():    #флаг, муфта П1 или нет
-                    db_from_start[temp]['date'][1]=db_from_start[temp]['date'][0]+dday
-                db_from_start[temp]['date'][2]=db_from_start[temp]['date'][1]+dday
-                def_ent_date.config(fg='Black')
-            except ValueError:showerror('Не сохранено!','Правильный формат:01.01.2019')
         db_from_start[temp]['km']=def_ent_km.get()                                 #запись километра
         temp_dist = def_ent_dist.get()
         if temp_dist != '':
@@ -104,8 +94,21 @@ def def_form(db_from_start,all_otv,all_control,all_sk,all_lkk):     #основ�
         db_from_start[temp]['sk']=all_sk[var_sk.get()]                             #запись людей
         db_from_start[temp]['lkk']=all_lkk[var_lkk.get()]                           #запись людей
         db_from_start[temp]['grnd_maker']=all_otv[var_grnd_maker.get()]                             #запись людей
-        db_from_start[temp]['grnd_contr']=all_control[var_grnd_contr.get()] 
-        
+        db_from_start[temp]['grnd_contr']=all_control[var_grnd_contr.get()]
+        if def_ent_date.get() != '':
+            try:
+                temp_date = list(int(i) for i in (def_ent_date.get().split('.')))  # интерпритация и запись даты
+                db_from_start[temp]['date'][0] = date(temp_date[2], temp_date[1],
+                                                      temp_date[0])  # интерпритация и запись даты
+                db_from_start[temp]['date'][1] = db_from_start[temp]['date'][0]
+                print(db_from_start[temp]['type_base'],111)
+                if 'муфта П1' == db_from_start[temp]['type_base']:  # флаг, муфта П1 или нет
+                    db_from_start[temp]['date'][1] = db_from_start[temp]['date'][0] + dday
+                    print('успех')
+                db_from_start[temp]['date'][2] = db_from_start[temp]['date'][1] + dday
+                def_ent_date.config(fg='Black')
+            except ValueError:
+                showerror('Не сохранено!', 'Правильный формат:01.01.2019')
         
     def up_s():                 #переместить секцию вверх по списку lbox
         temp=l_box.curselection()[0]

@@ -29,6 +29,8 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         current_wb['H37'] = x['TU']
         if 'OVP' in x:
             current_wb['N47'] = x['OVP']
+        else:
+            current_wb['A46'] = current_wb['A46'].value.replace('находится','не находится')
         current_wb['L51'] = x['otv'][0]
         current_wb['L57'] = x['contr'][0]
         current_wb['L55'] = x['sk'][0]

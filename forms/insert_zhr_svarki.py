@@ -32,7 +32,7 @@ def insert_zhr_svarki(def_db,road_programm,road_db,tube, km_start, km_finish, dy
                 type_repair = 'П1'
                 field_1 = '09Г2С \nТУ 1469-022-04690510-02'
                 field_2 = 'полумуфта\nполумуфта'
-                field_3 = '№-\n№-'
+                field_3 = '№-'
                 field_4 = 'СТ1,СТ2'
                 numb_stik += 2
                 break
@@ -40,7 +40,7 @@ def insert_zhr_svarki(def_db,road_programm,road_db,tube, km_start, km_finish, dy
                 type_repair = 'П2'
                 field_1 = '09Г2С \nТУ 1469-001-01297858-01'
                 field_2 = 'муфта\nсекция'
-                field_3 = '№123 \n № ' + remont['sec']
+                field_3 = '№ 123\n№ ' + remont['sec']
                 field_4 = 'СТ1,СТ2\nСТ3,СТ4\nСТ5,СТ6\nСТ7,СТ8\nСТ9,СТ10'
                 numb_stik += 10
                 break
@@ -55,7 +55,7 @@ def insert_zhr_svarki(def_db,road_programm,road_db,tube, km_start, km_finish, dy
             ws_l2['G' + str(current_row)] = str(random.randint(105,120))+' С°'
             ws_l2['H' + str(current_row)] = field_2
             ws_l2['I' + str(current_row)] = field_3
-            ws_l2['J' + str(current_row)] = str(remont['dl_muft']) + ' м\n№ - '
+            ws_l2['J' + str(current_row)] = str(remont['dl_muft']) + ' м\n - '
             ws_l2['K' + str(current_row)] = remont['km'] + ' км'
             ws_l2['L' + str(current_row)] = numb_index
             ws_l2['M' + str(current_row)] = field_4
