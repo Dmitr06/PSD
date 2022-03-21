@@ -6,7 +6,7 @@ import os
 def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_tube):
     wb = load_workbook(road_programm + road_to_excel)
     for i, x in enumerate(akt_vh):
-        current_wb = wb.create_sheet('%s. %s' % (i + 3, x['name']))
+        current_wb = wb.create_sheet('%s. %s' % (i + 1, x['name']))
         copy_ws = WorksheetCopy(wb['Empty'], current_wb)
         copy_ws.copy_worksheet()
         copy_ws._copy_cells()
@@ -19,7 +19,7 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         tube, km_start, km_finish, dy_tube)  # заголовок
         current_wb['K27'] = '%s, %s-%s км.' % (tube, km_start, km_finish)  # заголовок
         current_wb['M11'] = x['date'] + ' г.'  # дата
-        current_wb['P6'] = i + 3  # номер акта
+        current_wb['P6'] = i + 1  # номер акта
         current_wb['A8'] = '%s, в кол-ве %s %s.' % (x['full_name'], x['kol'], x['marker'])  # номер акта
         current_wb['K13'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
         current_wb['K19'] = ' '.join((x['contr'][1], x['contr'][2], x['contr'][0]))
@@ -36,10 +36,6 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         current_wb['L55'] = x['sk'][0]
         current_wb.print_area = 'A1:AB58'
     del (wb['Empty'])
-    # ---------------------электроды
-    ws = wb['1. 3.2 электроды 53.70']
-    ws['U4'] = akt_vh[0]['date'] + ' г.'
-    ws['O6'] = akt_vh[0]['otv'][0]
     road = road_db.rpartition('/')[0] + '/Входной контроль'
     if not os.path.exists(road):
         os.makedirs(road)
