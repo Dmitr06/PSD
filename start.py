@@ -209,8 +209,8 @@ def insert_akts(akt_vh, road_programm, road_db, data):
         traceback.print_exc(file=open('error.txt', 'w', encoding='utf-8'))
 
 
-if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
-    raise SystemExit
+'''if 'Dmitr062' not in getpass.getuser() and 'LazarevDS' not in getpass.getuser():
+    raise SystemExit'''
 
 akt_vh = []  # список с актами входного контроля
 def_db = []  # данные посекциям с дефектами получаемые из формы def_form
