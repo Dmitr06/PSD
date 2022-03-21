@@ -41,7 +41,6 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         os.makedirs(road)
     wb.save(road + '/Акты входного контроля.xlsx')
 
-
 road_to_excel = '/Excell/akt_vh.xlsx'
 if __name__ == '__main__':
     road_to_excel = '../Excell/akt_vh.xlsx'
