@@ -1,7 +1,6 @@
 ﻿from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Border, Side, Font
 
-
 def insert_zhr_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_tube):
     wb_zhr = load_workbook(road_programm + road_to_excel)
     ws_l1, ws_l2 = wb_zhr['L1'], wb_zhr['L2']
