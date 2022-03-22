@@ -36,7 +36,7 @@ def insert_akt_vh(akt_vh, road_programm, road_db, tube, km_start, km_finish, dy_
         current_wb['L55'] = x['sk'][0]
         current_wb.print_area = 'A1:AB58'
     del (wb['Empty'])
-        road = road_db.rpartition('/')[0] + '/Входной контроль'
+    road = road_db.rpartition('/')[0] + '/Входной контроль'
     if not os.path.exists(road):
         os.makedirs(road)
     wb.save(road + '/Акты входного контроля.xlsx')
