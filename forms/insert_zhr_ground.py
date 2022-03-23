@@ -9,6 +9,7 @@ def create_row(ws, ws_style, current_row, coord, height=13.50):
     for index in range(1, 15):
         ws.cell(current_row, index)._style = ws_style.cell(*coord)._style
 
+
 def insert_zhr_ground(def_db, road_programm, road_db, tube, km_start, km_finish, dy_tube):
     wb_zhr = load_workbook(road_programm + road_to_excel)
     ws_l1, ws_l2, ws_l3 = wb_zhr['Tittle'], wb_zhr['Table'], wb_zhr['Styles']
@@ -18,7 +19,7 @@ def insert_zhr_ground(def_db, road_programm, road_db, tube, km_start, km_finish,
     ws_l1['A3'] = 'Устранение дефектов на секциях %s, %s-%s км, Ду %s мм.' % (tube, km_start, km_finish, dy_tube)
     ws_l1['V11'] = km_start + ' км'
     ws_l1['AR11'] = km_finish + ' км'
-    ws_l1['S17'] = '%s %s %s'%(def_db[0]['otv'][1], def_db[0]['otv'][2], def_db[0]['otv'][0])
+    ws_l1['S17'] = '%s %s %s' % (def_db[0]['otv'][1], def_db[0]['otv'][2], def_db[0]['otv'][0])
     ws_l1['BO25'] = def_db[0]['date'][0].strftime('%d.%m.%Y') + ' года'
     ws_l1['BO27'] = def_db[-1]['date'][2].strftime('%d.%m.%Y') + ' года'
     # -----------------------Table----------
@@ -33,10 +34,13 @@ def insert_zhr_ground(def_db, road_programm, road_db, tube, km_start, km_finish,
     print(day_s)
     for i in day_s:
         for remont in def_db:
-            #V = round(remont['rand_value'][2] * remont['rand_value'][3] * (remont['dist'][4] - remont['dist'][3]) * 1.4)
-            if remont['date'][0] == i: temp_row = '5'  # Excavation
-            elif remont['date'][2] == i: temp_row = '6' # covering
-            else: continue
+            # V = round(remont['rand_value'][2] * remont['rand_value'][3] * (remont['dist'][4] - remont['dist'][3]) * 1.4)
+            if remont['date'][0] == i:
+                temp_row = '5'  # Excavation
+            elif remont['date'][2] == i:
+                temp_row = '6'  # covering
+            else:
+                continue
             create_row(ws_l2, ws_l3, current_row, (1, 1), height=62)
             ws_l2['A' + str(current_row)] = i.strftime('%d.%m.%y') + ' г.'  # date
             ws_l2['B' + str(current_row)] = ws_l3['B' + temp_row].value
@@ -49,16 +53,23 @@ def insert_zhr_ground(def_db, road_programm, road_db, tube, km_start, km_finish,
             ws_l2['G' + str(current_row)] = ws_l3['D' + temp_row].value
             ws_l2['H' + str(current_row)] = ws_l3['H' + temp_row].value
             ws_l2['I' + str(current_row)] = ws_l3['I' + temp_row].value
-            ws_l2['L' + str(current_row)] = '%s %s\n_______________\n%s' % (
-                remont['otv'][1], remont['otv'][2], remont['otv'][0])
-            ws_l2['M' + str(current_row)] = '%s %s\n_______________\n%s' % (
-                remont['contr'][1], remont['contr'][2], remont['contr'][0])
+            ws_l2['J' + str(current_row)] = ws_l3['J' + temp_row].value
+            if 'grnd_maker' in remont:
+                temp_man = 'grnd_maker'
+            else:
+                temp_man = 'otv'
+            ws_l2['L' + str(current_row)] = '%s %s\n_______________\n%s' % (remont[temp_man][1],
+                                                                            remont[temp_man][2],
+                                                                            remont[temp_man][0])
+            ws_l2['M' + str(current_row)] = '%s %s\n_______________\n%s' % (remont['sk'][1],
+                                                                            remont['sk'][2],
+                                                                            remont['sk'][0])
             current_row += 1
 
     # -----------------------Заключение
     ws_l2['M' + str(current_row + 1)] = 'Работы закончены. Журнал закрыт.'
     ws_l2['M' + str(current_row + 2)] = '%s %s %s _____________ %s г.' % (
-    remont['otv'][1], remont['otv'][2], remont['otv'][0], remont['date'][2].strftime('%d.%m.%Y'))
+        remont['otv'][1], remont['otv'][2], remont['otv'][0], remont['date'][2].strftime('%d.%m.%Y'))
     ws_l2.print_area = 'A1:N' + str(current_row + 2)
     del (wb_zhr['Styles'])
     road_db = os.path.normpath(road_db)
