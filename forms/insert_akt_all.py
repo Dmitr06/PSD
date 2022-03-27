@@ -1,6 +1,7 @@
 ﻿from openpyxl import load_workbook
 from openpyxl.styles import Font
 from datetime import *
+import os
 
 
 def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy_tube):
@@ -10,11 +11,13 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         # --------------начинаем заполнение акта адгезии
         ws1 = wb['Адгезия']
         ws1['O11'] = i + 1
-        ws1['W14'] = x['date'][2].strftime('%d.%m.%y') + ' г.'
+        ws1['W14'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
         ws1['J16'] = tube
         ws1['K22'] = dy_tube + ' мм.'
-        ws1['D29'] = x['km'] + ' км.'
-        ws1['H45'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
+        ws1['D29'] = '%s км.\n сек.№%s' % (x['km'], x['sec'])
+        ws1['BA1'] = ' '.join((x['otv'][1], x['otv'][2], x['otv'][0]))
+        ws1['BA2'] = ' '.join((x['contr'][1], x['contr'][2], x['contr'][0]))
+        ws1['BA3'] = ' '.join((x['sk'][1], x['sk'][2], x['sk'][0]))
         # --------------начинаем заполнение акта о выборочном ремонте
         ws2 = wb['Выборочный ремонт']
         ws2['AB5'] = x['date'][1].strftime('%d.%m.%Y') + ' г.'
@@ -75,18 +78,25 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         ws3['S22'] = 'Дист. %s м/%s км' % (x['dist'][2], x['km'])
         # --------------Укладка тп
         ws5 = wb['Укладка тп']
-        ws5['A1'] = x['grnd_maker'][2]
+        if 'grnd_maker' in x:
+            temp_grnd_maker = 'grnd_maker'
+            temp_contr_maker = 'grnd_contr'
+        else:
+            temp_grnd_maker = 'otv'
+            temp_contr_maker = 'contr'
+        ws5['A1'] = x[temp_grnd_maker][2]
         ws5['A3'] = 'Устранение дефектов на секциях %s, %s-%s км, Ду %s мм.' % (tube, km_start, km_finish, dy_tube)
         ws5['P9'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
         ws5['K23'] = 'Дист. %s м/%s км' % (x['dist'][3], x['km'])
         ws5['V23'] = 'Дист. %s м/%s км' % (x['dist'][4], x['km'])
         ws5['AA22'] = str(round(x['dist'][4] - x['dist'][3], 1)) + ' м.п.'
-        ws5['O13'] = ' '.join((x['grnd_contr'][1],
-                               x['grnd_contr'][2],
-                               x['grnd_contr'][0]))  # поменять первую букву регистра с большой на маленькую
-        ws5['O20'] = ' '.join((x['grnd_maker'][1],
-                               x['grnd_maker'][2],
-                               x['grnd_maker'][0]))
+
+        ws5['O13'] = ' '.join((x[temp_contr_maker][1],
+                               x[temp_contr_maker][2],
+                               x[temp_contr_maker][0]))  # поменять первую букву регистра с большой на маленькую
+        ws5['O20'] = ' '.join((x[temp_grnd_maker][1],
+                               x[temp_grnd_maker][2],
+                               x[temp_grnd_maker][0]))
         ws5['O16'] = ' '.join((x['sk'][1], x['sk'][2], x['sk'][0]))
         # --------------Акт объемов
         ws6 = wb['Объемы']
@@ -106,7 +116,7 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
         ws6['R25'] = x['date'][0].strftime('%d.%m.%Y') + ' г.'
         ws6['R30'] = x['date'][1].strftime('%d.%m.%Y') + ' г.'
         ws6['R31'] = x['date'][2].strftime('%d.%m.%Y') + ' г.'
-        ws6['V25'] = x['grnd_maker'][2]
+        ws6['V25'] = x[temp_grnd_maker][2]
         ws6['V26'] = x['otv'][2]
         ws6['P25'] = x['rand_value'][2] * x['rand_value'][3] * (x['dist'][4] - x['dist'][3]) * 1.4  # ПРОВЕРИТЬ
         ws6['P26'] = x['dist'][2] - x['dist'][1]
@@ -142,18 +152,21 @@ def insert_akt_all(def_db, road_programm, road_db, tube, km_start, km_finish, dy
                 break
         if index_muft == temp_index_muft:
             del (wb['Схема'])
-
-        wb.save(road_db.rpartition('/')[0] + '/%s. Секция %s.xlsx' % (i + 1, x['sec']))
+        road_db = os.path.normpath(road_db)
+        road_sec = os.path.join(road_db, '%s. Секция %s' % (i + 1, x['sec']))
+        if not os.path.exists(road_sec):
+            os.makedirs(road_sec)
+        road_sec = os.path.join(road_sec, 'Акты.xlsx')
+        wb.save(road_sec)
 
 
 road_to_excel = '/Excell/akt_all.xlsx'
-ws = ('Адгезия', 'Выборочный ремонт', 'Изоляция', 'Рекультивация', 'Укладка тп', 'Объемы', 'Схема')
+ws = ('Адгезия', 'Выборочный ремонт', 'Изоляция', 'Укладка тп', 'Объемы', 'Схема')
 if __name__ == '__main__':
-    import os
     road_to_excel = '../Excell/akt_all.xlsx'
     road = os.getcwd()
-    road_db=road.replace('\\','/')[:-9]+'Тест/'
-    print(road_db)
+    road_db = road.replace('\\', '/')[:-9] + 'Тест/'
+    # print(road_db)
     road_programm = ''
     tube, km_start, km_finish, dy_tube = 'МНПП "Рязань-Тула-Орел" отвод на новомосковскую НБ, ДТ', '12', '13', '530'
     def_db = [{'sec': '12', 'date': [date(2018, 12, 12), date(2018, 12, 13), date(2018, 12, 14)],
